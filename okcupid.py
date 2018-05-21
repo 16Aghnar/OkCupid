@@ -87,22 +87,20 @@ class Okcupid:
                     matches_global[userA.iden].append([userB.iden, match_score])
                     matches_global[userB.iden].append([userA.iden, match_score])
         
-        print('computation done!')
-        #Sorting. Very slow so I turned it off.
-        if sorting == True:
-            for key, list_matches in matches_global.items() :
-                temp = [list_matches[0]]
-                for match in list_matches[1::]:
-                    inserted = False
-                    for x, y in enumerate(temp):
-                        if y[1] < match[1] : 
-                            temp.insert(x, match)
-                            inserted = True
-                    if inserted == False : 
-                        temp.append(match)
-                matches_global[key] = temp
         
-        
+        #Sorting, another way, and selection of 10 bests
+        for key, list_matches in matches_global.items():
+            top10 = []
+            for i in range(10):
+                rankbest, matchbest = 0, list_matches[0]
+                for rank, match in enumerate(list_matches):
+                    if match[1] > matchbest[1]:
+                        rankbest, matchbest = rank, match
+                top10.append(matchbest)
+                list_matches.pop(rankbest)
+
+            matches_global[key] = top10 #conserve only the 10 bests
+            
         return matches_global
 
 if __name__ == '__main__':
